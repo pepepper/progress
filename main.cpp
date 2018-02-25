@@ -6,6 +6,9 @@ LRESULT CALLBACK WndProc(HWND hWnd , UINT msg , WPARAM wp , LPARAM lp) {
 	TEXTMETRIC tm;
 	RECT rect;
 	switch (msg) {
+		case WM_TIMER:
+			ShowWindow(hWnd, SW_SHOW);
+			return 0;
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			return 0;
@@ -21,6 +24,19 @@ LRESULT CALLBACK WndProc(HWND hWnd , UINT msg , WPARAM wp , LPARAM lp) {
 		case WM_KEYDOWN:
 			if (wp == 27)	WndProc(hWnd, WM_DESTROY, 0, 0);
 			return 0;
+		case WM_COMMAND:
+			switch(LOWORD(wp)){//さっきのボタンの子ウィンドウIDなら
+                case 1:
+                    MessageBox(NULL,TEXT("おうそうか\n頑張れ"),TEXT("進捗"),MB_OK|MB_ICONINFORMATION);
+					SetTimer(hWnd,1,3600000,NULL);
+					ShowWindow(hWnd, SW_HIDE);
+                    return 0;
+                case 2:
+                    MessageBox(NULL,TEXT("は　や　く　し　ろ"),TEXT("進捗"),MB_OK|MB_ICONWARNING);
+					SetTimer(hWnd,1,1800000,NULL);
+					ShowWindow(hWnd, SW_HIDE);
+                    return 0;
+			}
 	}
 	return DefWindowProc(hWnd , msg , wp , lp);
 }
@@ -44,7 +60,7 @@ int WINAPI WinMain(HINSTANCE hInstance , HINSTANCE hPrevInstance ,LPSTR lpCmdLin
 
 	hwnd = CreateWindow(
 			TEXT("KITTY") , TEXT("　　　　　　　　　　グラ担当さん") ,
-			WS_VISIBLE ,
+			WS_VISIBLE,
 			CW_USEDEFAULT , CW_USEDEFAULT ,
 			320 , 240 ,
 			NULL , NULL , hInstance , NULL
@@ -54,14 +70,14 @@ int WINAPI WinMain(HINSTANCE hInstance , HINSTANCE hPrevInstance ,LPSTR lpCmdLin
 		TEXT("BUTTON") , TEXT("OKです") ,
 		WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON ,
 		75 , 170 , 80 , 25 ,
-		hwnd , NULL , hInstance , NULL
+		hwnd ,(HMENU)1, hInstance , NULL
 	);
 
 	CreateWindow(
 		TEXT("BUTTON") , TEXT("ダメです!") ,
 		WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON ,
 		155 , 170 , 80 , 25 ,
-		hwnd , NULL , hInstance , NULL
+		hwnd , (HMENU)2 , hInstance , NULL
 	);
 
 	if (hwnd == NULL) return -1;
